@@ -15,4 +15,4 @@ socketio = SocketIO(app, max_http_buffer_size=10485760)
 # ROUTES ==========
 @app.route("/")
 def main():
-    return
+    return render_template("index.html")

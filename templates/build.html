@@ -29,6 +29,12 @@
 }
 .palette-card.dragging { opacity: 0.5; }
 .palette-card img { width: 72px; height: 72px; object-fit: contain; display: block; }
+#agent-palette {
+    display: grid;
+    grid-template-columns: repeat(8, 110px);
+    gap: 1rem;
+    justify-content: center;
+}
 </style>
 {% endblock %}
 
@@ -48,16 +54,16 @@
         </div>
     </div>
 
-    <div class="w-100 mb-3">
-        <label class="form-label text-white fw-bold mb-3">Drag or click to add agents</label>
-        <div id="agent-palette" class="row row-cols-8 justify-content-center g-2 mx-auto" style="max-width: 1040px;"></div>
+    <div class="text-center w-100 mb-3">
+        <label class="form-label text-white fw-bold mb-3 d-block">Drag or click to add agents</label>
+        <div id="agent-palette"></div>
     </div>
 
-    <div class="text-center w-100 mb-3">
+    <div class="text-center w-100 my-4">
         <button class="btn btn-outline-secondary" id="clear-comp-btn">Clear Comp</button>
     </div>
 
-    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1055;">
+    <div class="position-fixed top-0 end-0 p-3" style="z-index: 1055;">
         <div id="toast" class="toast bg-dark text-white border border-secondary" role="alert" aria-live="assertive" aria-atomic="true">
             <div class="toast-body"></div>
         </div>
@@ -66,140 +72,5 @@
 {% endblock %}
 
 {% block scripts %}
-<script>
-const AGENTS = [
-    "astra","breach","brimstone","chamber","clove","cypher","deadlock","fade","gekko","harbor",
-    "hush","iso","jett","kayo","killjoy","miks","neon","omen","phoenix","raze","reyna",
-    "sage","skye","sova","tejo","veto","viper","vyse","waylay","yoru"
-];
-
-const slotsContainer = document.getElementById("slots-container");
-const palette = document.getElementById("agent-palette");
-const clearBtn = document.getElementById("clear-comp-btn");
-const toastEl = document.getElementById("toast");
-const toastBody = toastEl.querySelector(".toast-body");
-
-const slots = Array.from(slotsContainer.children);
-const comp = new Array(5).fill(null);
-
-function updateSlotUI() {
-    slots.forEach((slot, i) => {
-        const agent = comp[i];
-        const empty = slot.querySelector(".slot-empty");
-        const icon = slot.querySelector(".slot-icon");
-        const overlay = slot.querySelector(".slot-name-overlay");
-        const remove = slot.querySelector(".slot-remove");
-
-        if (agent) {
-            empty.classList.add("d-none");
-            icon.classList.remove("d-none");
-            icon.src = "/static/icons/" + agent + "_icon.png";
-            icon.alt = agent;
-            overlay.classList.remove("d-none");
-            overlay.textContent = agent.charAt(0).toUpperCase() + agent.slice(1);
-            remove.classList.remove("d-none");
-            slot.classList.add("filled");
-        } else {
-            empty.classList.remove("d-none");
-            icon.classList.add("d-none");
-            overlay.classList.add("d-none");
-            remove.classList.add("d-none");
-            slot.classList.remove("filled");
-        }
-    });
-}
-
-function firstEmptySlot() {
-    return comp.indexOf(null);
-}
-
-function addAgent(agent) {
-    if (!agent) return;
-    if (comp.includes(agent)) {
-        showToast(agent.charAt(0).toUpperCase() + agent.slice(1) + " is already in your comp.");
-        return;
-    }
-    const idx = firstEmptySlot();
-    if (idx === -1) {
-        showToast("Comp is full (5 agents). Clear a slot first.");
-        return;
-    }
-    comp[idx] = agent;
-    updateSlotUI();
-}
-
-function removeAgent(idx) {
-    comp[idx] = null;
-    updateSlotUI();
-}
-
-AGENTS.forEach(a => {
-    const card = document.createElement("div");
-    card.className = "col palette-card d-flex flex-column align-items-center gap-1 border border-white/20 bg-white/5 rounded-3 p-2 cursor-pointer";
-    card.draggable = true;
-    card.dataset.agent = a;
-
-    const img = document.createElement("img");
-    img.src = "/static/icons/" + a + "_icon.png";
-    img.alt = a;
-    img.draggable = false;
-
-    const name = document.createElement("div");
-    name.className = "text-white fw-bold small text-center";
-    name.textContent = a.charAt(0).toUpperCase() + a.slice(1);
-
-    card.appendChild(img);
-    card.appendChild(name);
-    palette.appendChild(card);
-
-    card.addEventListener("click", () => addAgent(a));
-
-    card.addEventListener("dragstart", e => {
-        e.dataTransfer.setData("text/plain", a);
-        e.dataTransfer.effectAllowed = "copy";
-        card.classList.add("dragging");
-    });
-    card.addEventListener("dragend", () => card.classList.remove("dragging"));
-});
-
-clearBtn.addEventListener("click", () => {
-    comp.fill(null);
-    updateSlotUI();
-    showToast("Comp cleared.");
-});
-
-slots.forEach((slot, i) => {
-    slot.addEventListener("click", e => {
-        if (e.target.closest(".slot-remove")) return;
-        if (comp[i]) removeAgent(i);
-    });
-    slot.querySelector(".slot-remove").addEventListener("click", e => {
-        e.stopPropagation();
-        removeAgent(i);
-    });
-});
-
-slots.forEach(slot => {
-    slot.addEventListener("dragover", e => {
-        e.preventDefault();
-        e.dataTransfer.dropEffect = "copy";
-        slot.classList.add("drag-over");
-    });
-    slot.addEventListener("dragleave", () => slot.classList.remove("drag-over"));
-    slot.addEventListener("drop", e => {
-        e.preventDefault();
-        slot.classList.remove("drag-over");
-        const agent = e.dataTransfer.getData("text/plain");
-        addAgent(agent);
-    });
-});
-
-function showToast(msg) {
-    toastBody.textContent = msg;
-    const bsToast = new bootstrap.Toast(toastEl, { delay: 2500 });
-    bsToast.show();
-}
-
-updateSlotUI();
-</script>
+<script src="/static/js/build.js"></script>
 {% endblock %}

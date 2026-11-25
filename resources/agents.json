@@ -1,0 +1,182 @@
+{
+    "jett": {
+        "block_name": "JETT",
+        "class": "duelist",
+        "archetype": "",
+        "utilities": ""
+    },
+    "phoenix": {
+        "block_name": "PHOENIX",
+        "class": "duelist",
+        "archetype": "",
+        "utilities": ""
+    },
+    "neon": {
+        "block_name": "NEON",
+        "class": "duelist",
+        "archetype": "",
+        "utilities": ""
+    },
+    "raze": {
+        "block_name": "RAZE",
+        "class": "duelist",
+        "archetype": "",
+        "utilities": ""
+    },
+    "yoru": {
+        "block_name": "YORU",
+        "class": "duelist",
+        "archetype": "",
+        "utilities": ""
+    },
+    "waylay": {
+        "block_name": "WAYLAY",
+        "class": "duelist",
+        "archetype": "",
+        "utilities": ""
+    },
+    "reyna": {
+        "block_name": "REYNA",
+        "class": "duelist",
+        "archetype": "",
+        "utilities": ""
+    },
+    "iso": {
+        "block_name": "ISO",
+        "class": "duelist",
+        "archetype": "",
+        "utilities": ""
+    },
+    "hush": {
+        "block_name": "HUSH",
+        "class": "duelist",
+        "archetype": "",
+        "utilities": ""
+    },
+    "sova": {
+        "block_name": "SOVA",
+        "class": "initiator",
+        "archetype": "",
+        "utilities": ""
+    },
+    "fade": {
+        "block_name": "FADE",
+        "class": "initiator",
+        "archetype": "",
+        "utilities": ""
+    },
+    "gekko": {
+        "block_name": "GEKKO",
+        "class": "initiator",
+        "archetype": "",
+        "utilities": ""
+    },
+    "kayo": {
+        "block_name": "KAY/O",
+        "class": "initiator",
+        "archetype": "",
+        "utilities": ""
+    },
+    "breach": {
+        "block_name": "BREACH",
+        "class": "initiator",
+        "archetype": "",
+        "utilities": ""
+    },
+    "skye": {
+        "block_name": "SKYE",
+        "class": "initiator",
+        "archetype": "",
+        "utilities": ""
+    },
+    "tejo": {
+        "block_name": "TEJO",
+        "class": "initiator",
+        "archetype": "",
+        "utilities": ""
+    },
+    "astra": {
+        "block_name": "ASTRA",
+        "class": "controller",
+        "archetype": "",
+        "utilities": ""
+    },
+    "brimstone": {
+        "block_name": "BRIMSTONE",
+        "class": "controller",
+        "archetype": "",
+        "utilities": ""
+    },
+    "clove": {
+        "block_name": "CLOVE",
+        "class": "controller",
+        "archetype": "",
+        "utilities": ""
+    },
+    "harbor": {
+        "block_name": "HARBOR",
+        "class": "controller",
+        "archetype": "",
+        "utilities": ""
+    },
+    "miks": {
+        "block_name": "MIKS",
+        "class": "controller",
+        "archetype": "",
+        "utilities": ""
+    },
+    "omen": {
+        "block_name": "OMEN",
+        "class": "controller",
+        "archetype": "",
+        "utilities": ""
+    },
+    "viper": {
+        "block_name": "VIPER",
+        "class": "controller",
+        "archetype": "",
+        "utilities": ""
+    },
+    "chamber": {
+        "block_name": "CHAMBER",
+        "class": "sentinel",
+        "archetype": "",
+        "utilities": ""
+    },
+    "cypher": {
+        "block_name": "CYPHER",
+        "class": "sentinel",
+        "archetype": "",
+        "utilities": ""
+    },
+    "deadlock": {
+        "block_name": "DEADLOCK",
+        "class": "sentinel",
+        "archetype": "",
+        "utilities": ""
+    },
+    "killjoy": {
+        "block_name": "KILLJOY",
+        "class": "sentinel",
+        "archetype": "",
+        "utilities": ""
+    },
+    "sage": {
+        "block_name": "SAGE",
+        "class": "sentinel",
+        "archetype": "",
+        "utilities": ""
+    },
+    "veto": {
+        "block_name": "VETO",
+        "class": "sentinel",
+        "archetype": "",
+        "utilities": ""
+    },
+    "vyse": {
+        "block_name": "VYSE",
+        "class": "sentinel",
+        "archetype": "",
+        "utilities": ""
+    }
+}

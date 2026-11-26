@@ -35,6 +35,16 @@
     gap: 1rem;
     justify-content: center;
 }
+.class-header {
+    grid-column: 1 / -1;
+    font-weight: 700;
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    text-align: left;
+    padding-top: 0.75rem;
+    border-bottom: 2px solid currentColor;
+}
 </style>
 {% endblock %}
 
@@ -72,5 +82,8 @@
 {% endblock %}
 
 {% block scripts %}
+<script>
+    window.agentsDict = {{ agents_dict | tojson }};
+</script>
 <script src="/static/js/build.js"></script>
 {% endblock %}

@@ -12,6 +12,15 @@ def read_json_to_df(path) -> pd.DataFrame:
         return data_df
 
 
+def read_agents_data_from_json():
+    with open("resources/agents.json", "r+") as f:
+        agents_dict = json.load(f)
+        return agents_dict
+
+
+
+
+# Simple comp generation by statistics
 def generate_comp(df: pd.DataFrame, map: str):
     map_col = df[map]
     top_5_agents = map_col.nlargest(5).index.to_list()
@@ -22,7 +31,7 @@ def generate_comp(df: pd.DataFrame, map: str):
 
 def main():
     agent_usage_pct_df = read_json_to_df("resources/agent_usage_pct.json")
-    generate_comp(agent_usage_pct_df, "Lotus")
+    generate_comp(agent_usage_pct_df, "Abyss")
 
 
 

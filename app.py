@@ -2,7 +2,8 @@
 from flask import *
 from flask_socketio import SocketIO
 import requests
-import dpp, scrape
+import dotenv
+import dpp
 
 
 # CONFIGS ==========
@@ -19,4 +20,8 @@ def init_landing():
 
 @app.route("/build")
 def init_build():
-    return render_template("build.html")
+    agents_dict = dpp.read_agents_data_from_json()
+    return render_template("build.html", agents_dict=agents_dict)
+
+
+# PAGE UPDATES ==========

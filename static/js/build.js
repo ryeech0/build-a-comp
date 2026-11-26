@@ -1,12 +1,19 @@
-const AGENTS = [
-    "astra","breach","brimstone","chamber","clove","cypher","deadlock","fade","gekko","harbor",
-    "hush","iso","jett","kayo","killjoy","miks","neon","omen","phoenix","raze","reyna",
-    "sage","skye","sova","tejo","veto","viper","vyse","waylay","yoru"
-];
+const agentsDict = window.agentsDict || {};
+const CLASS_ORDER = ["duelist", "initiator", "controller", "sentinel"];
+const CLASS_META = {
+    duelist:    { label: "Duelist",    color: "text-danger" },
+    initiator:  { label: "Initiator",  color: "text-warning" },
+    controller: { label: "Controller", color: "text-success" },
+    sentinel:   { label: "Sentinel",   color: "text-primary" }
+};
 
 const $slots = $("#slots-container").children();
 const $palette = $("#agent-palette");
 const comp = new Array(5).fill(null);
+
+function displayName(slug) {
+    return agentsDict[slug] ? agentsDict[slug].block_name : slug;
+}
 
 function updateSlotUI() {
     $slots.each(function (i) {
@@ -19,8 +26,8 @@ function updateSlotUI() {
 
         if (agent) {
             $empty.addClass("d-none");
-            $icon.removeClass("d-none").attr("src", "/static/icons/" + agent + "_icon.png").attr("alt", agent);
-            $overlay.removeClass("d-none").text(agent.charAt(0).toUpperCase() + agent.slice(1));
+            $icon.removeClass("d-none").attr("src", "/static/icons/" + agent + "_icon.png").attr("alt", displayName(agent));
+            $overlay.removeClass("d-none").text(displayName(agent));
             $remove.removeClass("d-none");
             $slot.addClass("filled");
         } else {
@@ -40,7 +47,7 @@ function firstEmptySlot() {
 function addAgent(agent) {
     if (!agent) return;
     if (comp.includes(agent)) {
-        showToast(agent.charAt(0).toUpperCase() + agent.slice(1) + " is already in your comp.");
+        showToast(displayName(agent) + " is already in your comp.");
         return;
     }
     const idx = firstEmptySlot();
@@ -57,40 +64,52 @@ function removeAgent(idx) {
     updateSlotUI();
 }
 
-AGENTS.forEach(function (a) {
-    const $card = $("<div>", {
-        class: "palette-card d-flex flex-column align-items-center gap-1 border border-white/20 bg-white/5 rounded-3 p-2 cursor-pointer",
-        draggable: true,
-        "data-agent": a
-    });
+CLASS_ORDER.forEach(function (cls) {
+    const meta = CLASS_META[cls];
+    $palette.append($("<div>", {
+        class: "class-header " + meta.color,
+        text: meta.label
+    }));
 
-    const $img = $("<img>", {
-        src: "/static/icons/" + a + "_icon.png",
-        alt: a,
-        draggable: false
-    });
+    Object.keys(agentsDict)
+        .filter(function (slug) { return agentsDict[slug].class === cls; })
+        .forEach(function (slug) {
+            const blockName = displayName(slug);
 
-    const $name = $("<div>", {
-        class: "text-white fw-bold small text-center",
-        text: a.charAt(0).toUpperCase() + a.slice(1)
-    });
+            const $card = $("<div>", {
+                class: "palette-card d-flex flex-column align-items-center gap-1 border border-white/20 bg-white/5 rounded-3 p-2 cursor-pointer",
+                draggable: true,
+                "data-agent": slug
+            });
 
-    $card.append($img, $name);
-    $palette.append($card);
+            const $img = $("<img>", {
+                src: "/static/icons/" + slug + "_icon.png",
+                alt: blockName,
+                draggable: false
+            });
 
-    $card.on("click", function () {
-        addAgent(a);
-    });
+            const $name = $("<div>", {
+                class: "text-white fw-bold small text-center",
+                text: blockName
+            });
 
-    $card.on("dragstart", function (e) {
-        e.originalEvent.dataTransfer.setData("text/plain", a);
-        e.originalEvent.dataTransfer.effectAllowed = "copy";
-        $(this).addClass("dragging");
-    });
+            $card.append($img, $name);
+            $palette.append($card);
 
-    $card.on("dragend", function () {
-        $(this).removeClass("dragging");
-    });
+            $card.on("click", function () {
+                addAgent(slug);
+            });
+
+            $card.on("dragstart", function (e) {
+                e.originalEvent.dataTransfer.setData("text/plain", slug);
+                e.originalEvent.dataTransfer.effectAllowed = "copy";
+                $(this).addClass("dragging");
+            });
+
+            $card.on("dragend", function () {
+                $(this).removeClass("dragging");
+            });
+        });
 });
 
 $("#clear-comp-btn").on("click", function () {

@@ -2,7 +2,7 @@
 import pandas as pd
 import numpy as np
 import json
-import scrape
+from services import scrape
 
 
 # FUNCTIONS ==========

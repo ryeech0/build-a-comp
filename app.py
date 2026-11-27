@@ -2,7 +2,7 @@
 from flask import *
 from flask_socketio import SocketIO
 import requests
-import dpp
+from services import dpp
 
 
 # CONFIGS ==========

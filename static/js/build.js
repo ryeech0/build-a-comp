@@ -138,6 +138,57 @@ $("#mapFilterMenu .dropdown-item").on("click", function (e) {
     $("#mapFilterBtn").text($(this).data("map"));
 });
 
+let sortState = { key: null, dir: null };
+
+window.applyStatsSort = function () {
+    const key = sortState.key;
+    const dir = sortState.dir;
+
+    const $ths = $("#agent-stats-table th[data-sort]");
+    $ths.removeClass("sort-asc sort-desc")
+        .find(".sort-icon").attr("class", "bi bi-arrow-down-up sort-icon");
+
+    if (!key) return;
+
+    const $active = $ths.filter(`[data-sort="${key}"]`);
+    $active.addClass(dir === "asc" ? "sort-asc" : "sort-desc")
+        .find(".sort-icon").attr("class", dir === "asc" ? "bi bi-sort-up sort-icon" : "bi bi-sort-down sort-icon");
+
+    const rows = $("#agent-stats-table tbody tr").get();
+    rows.sort(function (a, b) {
+        let cmp = 0;
+        if (key === "name") {
+            cmp = $(a).find(".stats-agent-name").text()
+                .localeCompare($(b).find(".stats-agent-name").text(), undefined, { sensitivity: "base" });
+        } else {
+            const va = parseFloat($(a).find(`td[data-stat='${key}']`).text());
+            const vb = parseFloat($(b).find(`td[data-stat='${key}']`).text());
+            const na = isNaN(va) ? -Infinity : va;
+            const nb = isNaN(vb) ? -Infinity : vb;
+            cmp = na - nb;
+            if (cmp === 0) {
+                cmp = $(a).find(".stats-agent-name").text()
+                    .localeCompare($(b).find(".stats-agent-name").text(), undefined, { sensitivity: "base" });
+            }
+        }
+        return dir === "desc" ? -cmp : cmp;
+    });
+    $.each(rows, function (_, row) {
+        $("#agent-stats-table tbody").append(row);
+    });
+};
+
+$("#agent-stats-table th[data-sort]").on("click", function () {
+    const key = $(this).data("sort");
+    if (sortState.key === key) {
+        sortState.dir = sortState.dir === "asc" ? "desc" : "asc";
+    } else {
+        sortState.key = key;
+        sortState.dir = "asc";
+    }
+    window.applyStatsSort();
+});
+
 function showToast(msg) {
     $(".toast-body").text(msg);
     const bsToast = new bootstrap.Toast("#toast", { delay: 2500 });

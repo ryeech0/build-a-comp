@@ -27,4 +27,5 @@ socket.on("map_data_sent", function(data) {
             $(this).find("td[data-stat='winrate']").text(winrate.toString() + "%");
         });
     });
+    if (window.applyStatsSort) window.applyStatsSort();
 });

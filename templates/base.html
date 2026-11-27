@@ -17,16 +17,23 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
 
+    <!-- Socketio -->
+    <script src="https://cdn.socket.io/4.5.0/socket.io.min.js"></script>
+
     <!-- Transparent scrollbar -->
     <style>
-    main {
-        scrollbar-width: thin;
-        scrollbar-color: rgba(255,255,255,0.2) transparent;
-    }
-    main::-webkit-scrollbar { width: 8px; }
-    main::-webkit-scrollbar-track { background: transparent; }
-    main::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 4px; }
-    main::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.35); }
+        main {
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255,255,255,0.2) transparent;
+        }
+        main::-webkit-scrollbar { width: 8px; }
+        main::-webkit-scrollbar-track { background: transparent; }
+        main::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 4px; }
+        main::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.35); }
+    
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif
+        }
     </style>
 
     {% block styles %}{% endblock %}

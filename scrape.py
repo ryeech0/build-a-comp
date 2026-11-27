@@ -28,15 +28,12 @@ def create_driver():
 
     return driver
 
-
 def load_driver(driver, url):
     driver.get(url)
     return driver
 
-
 def terminate_driver(driver):
     driver.close()
-
 
 def create_soup(url):
     response = requests.get(url)
@@ -47,11 +44,9 @@ def create_soup(url):
     # End of testing block
     return soup
 
-
 def scrape_tables(soup: BeautifulSoup):
     tables = soup.find_all("table", class_="wf-table")
     return tables
-
 
 # Scrapes usage table data and writes to JSON
 def parse_usage_table(table):
@@ -75,7 +70,7 @@ def parse_usage_table(table):
         map_cell = row_cells[0]
         map_name = map_cell.get_text(strip=True)
         if map_name:
-            current_maps.append(map_name[1:])
+            current_maps.append(map_name[1:].lower())
         else:
             continue
 
@@ -93,7 +88,6 @@ def parse_usage_table(table):
 
     # Write to JSON
     agent_usage_pct_df.to_json("resources/agent_usage_pct.json", orient="index", indent=4)
-
 
 # Scrapes agent pick data per map and writes to separate JSON files
 def parse_map_tables(tables):
@@ -116,14 +110,14 @@ def parse_map_tables(tables):
             current_agents.append(agent_name)
 
         # Get agent comp rows
-        print("start")
+        # print("start")
         # for row in table.select(".pr-matrix-row.mod-dropdown"):
         for row in table.find_all("tr", class_="pr-matrix-row"):
             team_js_data = row.find("script").contents
             for team_data in team_js_data:
                 team_data_list = ast.literal_eval(team_data)
                 for match in team_data_list:
-                    print(match)
+                    # print(match)
                     matchup_data = {
                         "match_code": int(match["link"][-6:]),
                         "result": match["result"],
@@ -145,7 +139,6 @@ def parse_map_tables(tables):
         json_filepath = "resources/" + current_map + ".json"
         agent_comps_df.to_json(json_filepath, orient="records", indent=4)
 
-
 # Scrape and process vlr tables into JSON files
 def process_tables_from_vlr():
     with open("resources/tour_code.json", "r+") as f:
@@ -165,8 +158,6 @@ def process_tables_from_vlr():
         parse_map_tables(vlr_tables[1:])
 
         
-
-
 # FOR TESTING PURPOSES
 if __name__ == "__main__":
     process_tables_from_vlr()

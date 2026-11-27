@@ -4,75 +4,201 @@
 
 {% block styles %}
 <style>
-.slot-card {
-    width: 240px;
-    height: 240px;
-    border: 2px dashed rgba(255,255,255,0.35);
-    border-radius: 16px;
-    background: rgba(255,255,255,0.05);
-    cursor: pointer;
-    transition: border-color 0.2s, background 0.2s;
-    position: relative;
-}
-.slot-card.filled { border-style: solid; border-color: #dc3545; background: rgba(220,53,69,0.15); }
-.slot-card.drag-over { border-color: #dc3545; background: rgba(220,53,69,0.25); }
-.slot-icon { max-width: 200px; max-height: 200px; object-fit: contain; display: block; }
-.slot-name-overlay {
-    position: absolute; bottom: 8px; left: 8px; right: 8px;
-    background: rgba(0,0,0,0.6); color: #fff; font-size: 0.9rem; font-weight: 700;
-    border-radius: 0 0 12px 12px; padding: 6px 8px; text-align: center;
-    overflow: hidden; text-overflow: ellipsis; white-space: nowrap; z-index: 2;
-}
-.slot-remove {
-    position: absolute; top: 8px; right: 8px; width: 32px; height: 32px;
-    border-radius: 50%; font-size: 1.1rem; font-weight: 700; line-height: 1; z-index: 3; padding: 0;
-}
-.palette-card.dragging { opacity: 0.5; }
-.palette-card img { width: 72px; height: 72px; object-fit: contain; display: block; }
-#agent-palette {
-    display: grid;
-    grid-template-columns: repeat(8, 110px);
-    gap: 1rem;
-    justify-content: center;
-}
-.class-header {
-    grid-column: 1 / -1;
-    font-weight: 700;
-    font-size: 1rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    text-align: left;
-    padding-top: 0.75rem;
-    border-bottom: 2px solid currentColor;
-}
+    /* --- Section A: slots --- */
+    .slot-card {
+        width: 100px;
+        height: 100px;
+        border: 2px dashed rgba(255,255,255,0.35);
+        border-radius: 12px;
+        background: rgba(255,255,255,0.05);
+        cursor: pointer;
+        transition: border-color 0.2s, background 0.2s;
+        position: relative;
+    }
+    .slot-card.filled { border-style: solid; border-color: #dc3545; background: rgba(220,53,69,0.15); }
+    .slot-icon { max-width: 72px; max-height: 72px; object-fit: contain; display: block; }
+    .slot-name-overlay {
+        position: absolute; bottom: 3px; left: 3px; right: 3px;
+        background: rgba(0,0,0,0.6); color: #fff; font-size: 0.65rem; font-weight: 700;
+        border-radius: 0 0 9px 9px; padding: 3px 4px; text-align: center;
+        overflow: hidden; text-overflow: ellipsis; white-space: nowrap; z-index: 2;
+    }
+    .slot-remove {
+        position: absolute; top: 3px; right: 3px; width: 20px; height: 20px;
+        border-radius: 50%; font-size: 0.75rem; font-weight: 700; line-height: 1; z-index: 3; padding: 0;
+    }
+
+    /* --- Section A: win rate below composition --- */
+    .comp-winrate {
+        border: 1px solid rgba(255,255,255,0.15);
+        border-radius: 12px;
+        background: rgba(255,255,255,0.05);
+        padding: 0.75rem 1rem;
+    }
+
+    /* --- Modal palette --- */
+    .palette-card img { width: 72px; height: 72px; object-fit: contain; display: block; }
+    #agent-palette {
+        display: grid;
+        grid-template-columns: repeat(6, 110px);
+        gap: 1rem;
+        justify-content: center;
+    }
+    .class-header {
+        grid-column: 1 / -1;
+        font-weight: 700;
+        font-size: 1rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        text-align: left;
+        padding-top: 0.75rem;
+        border-bottom: 2px solid currentColor;
+    }
+
+    /* --- Section C: borderless stats table --- */
+    .stats-scroll { max-height: 360px; overflow-y: auto; }
+    .stats-table { --bs-table-bg: transparent; }
+    .stats-table th {
+        color: rgba(255,255,255,0.5);
+        font-weight: 600;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        border-bottom: 1px solid rgba(255,255,255,0.15);
+        position: sticky;
+        top: 0;
+        background: #212529;
+        z-index: 1;
+    }
+    .stats-table td {
+        color: #fff;
+        padding: 0.55rem 0.35rem;
+        border: none;
+    }
+    .stats-table tbody tr:hover { background: rgba(255,255,255,0.05); }
+    .stats-agent-icon {
+        width: 36px;
+        height: 36px;
+        object-fit: contain;
+        display: block;
+    }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="d-flex flex-column align-items-center py-4">
-    <div class="d-inline-block text-center mb-3">
-        <h2 class="text-white fw-bold mb-3">Your Agent Composition</h2>
-        <div class="slots-row d-flex flex-wrap gap-3 justify-content-center" id="slots-container">
-            {% for i in range(5) %}
-            <div class="slot-card d-flex align-items-center justify-content-center" data-slot="{{ i }}">
-                <span class="slot-empty text-body-secondary small">Empty</span>
-                <img class="slot-icon d-none" src="" alt="" draggable="false">
-                <div class="slot-name-overlay d-none"></div>
-                <button type="button" class="slot-remove btn btn-outline-danger btn-sm rounded-circle d-none" aria-label="Remove agent">&times;</button>
+<div class="container-fluid px-4 py-4">
+    <div class="row g-4">
+
+        <!-- LEFT BLOCK: Sections A + B (composition building) -->
+        <div class="col-lg-6">
+
+            <!-- Section A: 5 slots + win rate below -->
+            <section id="composition-section">
+                <h2 class="text-white fw-bold mb-3">Your Agent Composition</h2>
+
+                <div class="slots-row d-flex flex-wrap gap-3 justify-content-center mb-3" id="slots-container">
+                    {% for i in range(5) %}
+                    <div class="slot-card d-flex align-items-center justify-content-center" data-slot="{{ i }}">
+                        <span class="slot-empty text-body-secondary small">Empty</span>
+                        <img class="slot-icon d-none" src="" alt="" draggable="false">
+                        <div class="slot-name-overlay d-none"></div>
+                        <button type="button" class="slot-remove btn btn-outline-danger btn-sm rounded-circle d-none" aria-label="Remove agent">&times;</button>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Win rate percentage below the composition -->
+                <div class="comp-winrate text-center" id="comp-winrate">
+                    <div class="text-white-50 small text-uppercase mb-1">Composition Win Rate</div>
+                    <div class="fs-2 fw-bold" id="comp-winrate-value">--%</div>
+                </div>
+            </section>
+
+            <!-- Section B: agent picker trigger (popup) -->
+            <section id="agents-section" class="mt-4">
+                <label class="form-label text-white fw-bold mb-3 d-block">Click to add agents</label>
+
+                <div class="text-center">
+                    <button type="button" class="btn btn-outline-light" id="open-palette-btn"
+                            data-bs-toggle="modal" data-bs-target="#agentModal">
+                        Select Agent
+                    </button>
+                </div>
+
+                <div class="text-center mt-4">
+                    <button class="btn btn-outline-secondary" id="clear-comp-btn">Clear Comp</button>
+                </div>
+            </section>
+
+        </div>
+
+        <!-- RIGHT BLOCK: Section C (pickrates & winrates) -->
+        <div class="col-lg-6">
+            <section id="stats-section">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h3 class="text-white fw-bold mb-0">Agent Stats</h3>
+
+                    <div class="dropdown">
+                        <button class="btn btn-outline-light btn-sm dropdown-toggle" type="button"
+                                id="mapFilterBtn" data-bs-toggle="dropdown" aria-expanded="false">
+                                Abyss
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end" id="mapFilterMenu" aria-labelledby="mapFilterBtn">
+                            <li><a class="dropdown-item active" href="#" data-map="Abyss">Abyss</a></li>
+                            <li><a class="dropdown-item" href="#" data-map="Bind">Bind</a></li>
+                            <li><a class="dropdown-item" href="#" data-map="Corrode">Corrode</a></li>
+                            <li><a class="dropdown-item" href="#" data-map="Haven">Haven</a></li>
+                            <li><a class="dropdown-item" href="#" data-map="Lotus">Lotus</a></li>
+                            <li><a class="dropdown-item" href="#" data-map="Summit">Summit</a></li>
+                            <li><a class="dropdown-item" href="#" data-map="Sunset">Sunset</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="stats-scroll">
+                    <table class="table table-borderless align-middle mb-0 stats-table" id="agent-stats-table">
+                        <thead>
+                            <tr>
+                                <th>Agent</th>
+                                <th class="text-end">Pick Rate</th>
+                                <th class="text-end">Win Rate</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for slug, info in agents_dict.items() %}
+                            <tr data-agent="{{ slug }}">
+                                <td>
+                                    <img src="/static/icons/{{ slug }}_icon.png" alt="{{ info.block_name }}"
+                                         title="{{ info.block_name }}" class="stats-agent-icon">
+                                </td>
+                                <td class="text-end" data-stat="pickrate">--%</td>
+                                <td class="text-end" data-stat="winrate">--%</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+
+    </div>
+
+    <!-- Agent selection popup -->
+    <div class="modal fade" id="agentModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content bg-dark text-white border-secondary">
+                <div class="modal-header border-secondary">
+                    <h5 class="modal-title">Select an Agent</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="agent-palette"></div>
+                </div>
             </div>
-            {% endfor %}
         </div>
     </div>
 
-    <div class="text-center w-100 mb-3">
-        <label class="form-label text-white fw-bold mb-3 d-block">Drag or click to add agents</label>
-        <div id="agent-palette"></div>
-    </div>
-
-    <div class="text-center w-100 my-4">
-        <button class="btn btn-outline-secondary" id="clear-comp-btn">Clear Comp</button>
-    </div>
-
+    <!-- Toast -->
     <div class="position-fixed top-0 end-0 p-3" style="z-index: 1055;">
         <div id="toast" class="toast bg-dark text-white border border-secondary" role="alert" aria-live="assertive" aria-atomic="true">
             <div class="toast-body"></div>
@@ -86,4 +212,5 @@
     window.agentsDict = {{ agents_dict | tojson }};
 </script>
 <script src="/static/js/build.js"></script>
+<script src="/static/js/socket.js"></script>
 {% endblock %}

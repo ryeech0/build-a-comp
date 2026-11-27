@@ -15,6 +15,10 @@ function displayName(slug) {
     return agentsDict[slug] ? agentsDict[slug].block_name : slug;
 }
 
+function agentModal() {
+    return bootstrap.Modal.getOrCreateInstance("#agentModal");
+}
+
 function updateSlotUI() {
     $slots.each(function (i) {
         const agent = comp[i];
@@ -57,6 +61,7 @@ function addAgent(agent) {
     }
     comp[idx] = agent;
     updateSlotUI();
+    agentModal().hide();
 }
 
 function removeAgent(idx) {
@@ -73,12 +78,12 @@ CLASS_ORDER.forEach(function (cls) {
 
     Object.keys(agentsDict)
         .filter(function (slug) { return agentsDict[slug].class === cls; })
+        .sort(function (a, b) { return displayName(a).localeCompare(displayName(b)); })
         .forEach(function (slug) {
             const blockName = displayName(slug);
 
             const $card = $("<div>", {
                 class: "palette-card d-flex flex-column align-items-center gap-1 border border-white/20 bg-white/5 rounded-3 p-2 cursor-pointer",
-                draggable: true,
                 "data-agent": slug
             });
 
@@ -99,16 +104,6 @@ CLASS_ORDER.forEach(function (cls) {
             $card.on("click", function () {
                 addAgent(slug);
             });
-
-            $card.on("dragstart", function (e) {
-                e.originalEvent.dataTransfer.setData("text/plain", slug);
-                e.originalEvent.dataTransfer.effectAllowed = "copy";
-                $(this).addClass("dragging");
-            });
-
-            $card.on("dragend", function () {
-                $(this).removeClass("dragging");
-            });
         });
 });
 
@@ -123,7 +118,11 @@ $slots.each(function (i) {
 
     $slot.on("click", function (e) {
         if ($(e.target).closest(".slot-remove").length) return;
-        if (comp[i]) removeAgent(i);
+        if (comp[i]) {
+            removeAgent(i);
+        } else {
+            agentModal().show();
+        }
     });
 
     $slot.find(".slot-remove").on("click", function (e) {
@@ -132,21 +131,11 @@ $slots.each(function (i) {
     });
 });
 
-$slots.on("dragover", function (e) {
+$("#mapFilterMenu .dropdown-item").on("click", function (e) {
     e.preventDefault();
-    e.originalEvent.dataTransfer.dropEffect = "copy";
-    $(this).addClass("drag-over");
-});
-
-$slots.on("dragleave", function () {
-    $(this).removeClass("drag-over");
-});
-
-$slots.on("drop", function (e) {
-    e.preventDefault();
-    $(this).removeClass("drag-over");
-    const agent = e.originalEvent.dataTransfer.getData("text/plain");
-    addAgent(agent);
+    $("#mapFilterMenu .dropdown-item").removeClass("active");
+    $(this).addClass("active");
+    $("#mapFilterBtn").text($(this).data("map"));
 });
 
 function showToast(msg) {

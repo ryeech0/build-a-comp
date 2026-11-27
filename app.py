@@ -2,7 +2,6 @@
 from flask import *
 from flask_socketio import SocketIO
 import requests
-import dotenv
 import dpp
 
 
@@ -25,3 +24,25 @@ def init_build():
 
 
 # PAGE UPDATES ==========
+@socketio.on("agent_selected")
+def update_comp_data():
+    pass
+
+@socketio.on("map_selected")
+def update_stat_data(map: str):
+    # print(map)
+    res_dict = {}
+    agent_pickrates = dpp.get_all_agent_pickrates(map)
+    agent_winrates = dpp.calculate_all_agents_winrates(map)
+    agents_list = dpp.get_agents_list()
+    for agent in agents_list:
+        res_dict[agent] = {
+            "pickrate": agent_pickrates[agent], 
+            "winrate": agent_winrates[agent]
+        }
+    # print(res_dict)
+    socketio.emit("map_data_sent", res_dict)
+
+
+if __name__ == "__main__":
+    socketio.run(app, debug=True)
